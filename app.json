@@ -1,0 +1,12 @@
+{
+  "name": "lani",
+  "displayName": "lani",
+  "expo": {
+    "name": "lani",
+    "slug": "lani",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
