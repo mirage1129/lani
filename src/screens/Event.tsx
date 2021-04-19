@@ -1,16 +1,57 @@
 import React from 'react'
-import { StyleSheet, SafeAreaView, View, Text } from 'react-native'
+import { StyleSheet, SafeAreaView, View, Text, useWindowDimensions } from 'react-native'
 import { TouchableOpacity, FlatList } from 'react-native-gesture-handler'
-import { AntDesign, Ionicons } from '@expo/vector-icons'
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { StackNavigationProp } from '@react-navigation/stack'
 
-const Event = () => {
+type EventProp = {
+  navigation: StackNavigationProp<any, 'Event'>
+}
 
-  const handleCreateEvent = () => {
-  }
+const Item = () => {
+  return (
+    <FlatList
+      nestedScrollEnabled
+      data={[
+        { eventName: 'Marta Baby shower', day: 13, month: 'Mar', dateTime: 'Sat 11:30am', location: 'Tanjong Pagar', key: '1' },
+        { eventName: 'Nerd Dinner', day: 6, month: 'Mar', dateTime: 'Sat 7:30am', location: 'Clarke Quay', key: '2' },
+        { eventName: 'Birthday Dinner', day: 23, month: 'Feb', dateTime: 'Sat 7:30am', location: 'Celementi Pagar', key: '3' },
+      ]}
+      renderItem={({ item }) =>
+        <View key={item.key} style={styles.flatListItems}>
+          <View style={{ flex: 0.5, paddingVertical: 20, alignItems: 'center' }}>
+            <Text style={{ fontSize: 40 }}>{item.day}</Text>
+            <Text style={{ color: '#06899f', fontWeight: '600' }}>{item.month}</Text>
+          </View>
+
+          <View style={{ flex: 1.5, paddingVertical: 35, alignItems: 'flex-start' }}>
+            <Text style={{ fontWeight: '600' }}>{item.eventName}</Text>
+            <Text style={{ marginTop: 7 }}>{item.dateTime} - {item.location}</Text>
+          </View>
+        </View>
+      }
+      keyExtractor={item => item.key}
+    />
+  )
+}
+
+const Event = ({ navigation }: EventProp) => {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'Going' },
+    { key: 'second', title: 'Declined' },
+  ])
+
+  const renderScene = SceneMap({
+    first: Item,
+    second: Item,
+  })
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => handleCreateEvent()}>
+      <TouchableOpacity onPress={() => navigation.navigate('Create Event')}>
         <View style={styles.header}>
           <Text style={styles.eventButton}>Create Event</Text>
         </View>
@@ -22,42 +63,25 @@ const Event = () => {
             <Text style={styles.bodyTopPendingTitle}>Pending</Text>
           </View>
 
-          <FlatList
-            data={[
-              { eventName: 'Marta Baby shower', key: 1 },
-              { eventName: 'Nerd dinner', key: 2 }
-            ]}
-            renderItem={({ item }) =>
-              <View>
-                <Text>{item.eventName}</Text>
-              </View>
-            }
-          />
+          <Item />
         </View>
 
-        <View style={styles.bodyBottom}>
-          <View style={styles.bodyBottomTitle}>
-            
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <View style={styles.footerBox}>
-          <AntDesign name='calendar' size={26} color='white' />
-          <Text style={styles.footerBoxTitle}>Events</Text>
-        </View>
-
-        <View style={styles.footerBox}>
-          <Ionicons name='chatbox-outline' size={26} color='white' />
-          <Text style={styles.footerBoxTitle}>Chat</Text>
-        </View>
-
-        <View style={styles.footerBox}>
-          <AntDesign name='setting' size={26} color='white' />
-          <Text style={styles.footerBoxTitle}>Settings</Text>
-        </View>
-
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          renderTabBar={props =>
+            <TabBar
+              {...props}
+              style={styles.tabBar}
+              indicatorStyle={styles.tabBarIndicator}
+              renderLabel={({ route }) =>
+                <Text style={styles.tabBarLabel}>{route.title}</Text>
+              }
+            />
+          }
+        />
       </View>
     </SafeAreaView>
   )
@@ -101,28 +125,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-  bodyBottom: {
-    flex: 1,
-    backgroundColor: 'green',
-  },
-  bodyBottomTitle: {
-    //
-  },
-  footer: {
-    flex: 1.2,
+  flatListItems: {
     flexDirection: 'row',
+    borderStyle: 'solid',
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
+  },
+  tabBar: {
+    backgroundColor: '#f2f2f2',
+  },
+  tabBarIndicator: {
     backgroundColor: '#06899f',
-    justifyContent: 'space-evenly',
   },
-  footerBox: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  footerBoxTitle: {
-    color: 'white',
-    fontWeight: '600'
-  },
+  tabBarLabel: {
+    color: 'black',
+    fontSize: 20,
+  }
 })
 
 export default Event

@@ -1,3 +1,6 @@
-const API_URL = 'https://ioqhqzrswhjxrlaqianq.supabase.co'
+import images from './images'
+import { COLORS, SIZES } from './theme'
 
-export { API_URL }
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+
+export { images, COLORS, SIZES, ALPHABET }

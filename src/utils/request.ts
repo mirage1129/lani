@@ -1,13 +1,9 @@
-import axios from "axios"
-import {API_URL} from "../constants"
+import { createClient } from '@supabase/supabase-js'
+import { API_URL, API_TOKEN } from '@env'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export const useRequest = () => {
-  const instance = axios.create({
-    baseURL: API_URL,
-    timeout: 5000,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  return instance
-}
+export const supabase = createClient(API_URL, API_TOKEN, {
+  localStorage: AsyncStorage as any,
+  autoRefreshToken: true,
+  persistSession: true
+})
